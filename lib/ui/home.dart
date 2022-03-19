@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:animations/animations.dart';
 import 'package:contacts/ui/add_contact.dart';
+import 'package:contacts/ui/common/application_bar.dart';
 import 'package:contacts/ui/contact_list.dart';
 import 'package:flutter/material.dart';
 
-import 'common/application_bar.dart';
+import '../common/application_bar.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);

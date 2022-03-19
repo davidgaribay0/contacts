@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../util/constants.dart' as Constants;
-import '../common/input_field.dart';
+import 'common/application_bar.dart';
+import 'common/input_field.dart';
 import '../model/contact.dart';
 import 'contact_list.dart';
-import 'package:contacts/common/application_bar.dart';
 import 'package:contacts/db/contact_table.dart';
 
 class Edit extends ConsumerWidget {

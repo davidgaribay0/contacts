@@ -8,10 +8,10 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:contacts/util/constants.dart' as Constants;
 import 'package:flutter/src/widgets/text.dart' as Flutter;
 
-import '../common/application_bar.dart';
-import '../common/input_field.dart';
 import '../db/contact_table.dart';
 import '../model/contact.dart';
+import 'common/application_bar.dart';
+import 'common/input_field.dart';
 import 'contact_list.dart';
 
 class Add extends ConsumerWidget {
