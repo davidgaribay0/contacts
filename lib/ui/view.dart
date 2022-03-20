@@ -122,9 +122,6 @@ class View extends ConsumerWidget {
                 document: Document.fromJson(jsonContent),
                 selection: const TextSelection.collapsed(offset: 0));
 
-            var tel = contact.phoneNumber;
-            var sendEmail = contact.email;
-
             phoneNumber.text = contact.phoneNumber;
             birthday.text = contact.birthday!;
             email.text = contact.email!;
@@ -180,46 +177,58 @@ class View extends ConsumerWidget {
                   ),
                 ];
               },
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: _buildQuickActionIcons(contact),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: _buildQuickActionIcons(contact),
+                          ),
                         ),
-                      ),
-                      Wrap(
-                        runSpacing: 20,
-                        children: [
-                          InputField(
-                              phoneNumber, "Phone Number", TextInputType.phone,
-                              border: InputBorder.none, enabled: false),
-                          InputField(birthday, "Birthday", TextInputType.text,
-                              border: InputBorder.none, enabled: false),
-                          InputField(email, "Email Address",
-                              TextInputType.emailAddress,
-                              border: InputBorder.none, enabled: false),
-                          InputField(
-                              homeAddress, "Home Address", TextInputType.text,
-                              border: InputBorder.none, enabled: false),
-                          Expanded(
-                            child: QuillEditor(
-                                focusNode: _focus,
-                                autoFocus: false,
-                                controller: _quillController,
-                                readOnly: true,
-                                scrollController: ScrollController(),
-                                scrollable: true,
-                                padding: EdgeInsets.zero,
-                                expands: false),
-                          )
-                        ],
-                      )
-                    ]),
+                        Wrap(
+                          runSpacing: 20,
+                          children: [
+                            InputField(
+                                phoneNumber, "Phone Number", TextInputType.phone,
+                                border: InputBorder.none, enabled: false),
+                            InputField(birthday, "Birthday", TextInputType.text,
+                                border: InputBorder.none, enabled: false),
+                            InputField(email, "Email Address",
+                                TextInputType.emailAddress,
+                                border: InputBorder.none, enabled: false),
+                            InputField(
+                                homeAddress, "Home Address", TextInputType.text,
+                                border: InputBorder.none, enabled: false),
+                            Row(children: const [
+                              Flutter.Text(
+                                "Notes",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ]),
+                            Expanded(
+                              child: QuillEditor(
+                                  focusNode: _focus,
+                                  autoFocus: false,
+                                  controller: _quillController,
+                                  readOnly: true,
+                                  scrollController: ScrollController(),
+                                  scrollable: true,
+                                  padding: EdgeInsets.zero,
+                                  expands: false),
+                            )
+                          ],
+                        )
+                      ]),
+                ),
               ),
             );
           },

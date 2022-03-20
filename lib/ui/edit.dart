@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../util/constants.dart' as Constants;
 import 'common/application_bar.dart';
+import 'common/editor/toolbar.dart';
 import 'common/input_field.dart';
 import '../model/contact.dart';
 import 'contact_list.dart';
@@ -79,64 +80,57 @@ class Edit extends ConsumerWidget {
             ),
           ],
         ),
-        body: Form(
-          key: editFormKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-            child: Wrap(runSpacing: 20, children: [
-              InputField(
-                fullName,
-                "Full Name",
-                TextInputType.text,
-                validation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return Constants.FULL_NAME_REQUIRED;
-                  }
-                  return null;
-                },
-              ),
-              InputField(phoneNumber, "Phone Number", TextInputType.phone,
-                  inputFormatters: [phoneNumberMask]),
-              InputField(
-                birthday,
-                "Birthday",
-                TextInputType.number,
-                inputFormatters: [birthdayMask],
-              ),
-              InputField(email, "Email Address", TextInputType.emailAddress),
-              InputField(homeAddress, "Home Address", TextInputType.text),
-              QuillToolbar.basic(
-                  showHeaderStyle: false,
-                  showCodeBlock: false,
-                  showIndent: false,
-                  showListNumbers: false,
-                  showListCheck: false,
-                  showBoldButton: false,
-                  showBackgroundColorButton: false,
-                  showLink: false,
-                  showQuote: false,
-                  showUnderLineButton: false,
-                  showItalicButton: false,
-                  showUndo: false,
-                  showRedo: false,
-                  showInlineCode: false,
-                  showImageButton: false,
-                  showVideoButton: false,
-                  showClearFormat: false,
-                  showStrikeThrough: false,
-                  controller: _quillController),
-              Expanded(
-                child: QuillEditor(
-                    focusNode: _focus,
-                    autoFocus: false,
-                    controller: _quillController,
-                    readOnly: false,
-                    scrollController: ScrollController(),
-                    scrollable: true,
-                    padding: EdgeInsets.zero,
-                    expands: false),
-              )
-            ]),
+        body: SingleChildScrollView(
+          child: Form(
+            key: editFormKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+              child: Wrap(runSpacing: 20, children: [
+                InputField(
+                  fullName,
+                  "Full Name",
+                  TextInputType.text,
+                  validation: (value) {
+                    if (value == null || value.isEmpty) {
+                      return Constants.FULL_NAME_REQUIRED;
+                    }
+                    return null;
+                  },
+                ),
+                InputField(phoneNumber, "Phone Number", TextInputType.phone,
+                    inputFormatters: [phoneNumberMask]),
+                InputField(
+                  birthday,
+                  "Birthday",
+                  TextInputType.number,
+                  inputFormatters: [birthdayMask],
+                ),
+                InputField(email, "Email Address", TextInputType.emailAddress),
+                InputField(homeAddress, "Home Address", TextInputType.text),
+                Row(children: const [
+                  Flutter.Text(
+                    "Notes",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
+                  ),
+                ]),
+                Toolbar(quillController: _quillController),
+                Expanded(
+                  child: QuillEditor(
+                      focusNode: _focus,
+                      autoFocus: false,
+                      controller: _quillController,
+                      readOnly: false,
+                      scrollController: ScrollController(),
+                      scrollable: true,
+                      padding: EdgeInsets.zero,
+                      expands: false),
+                )
+              ]),
+            ),
           ),
         ),
       ),

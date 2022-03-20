@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:contacts/ui/common/editor/toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -58,9 +59,6 @@ class Add extends ConsumerWidget {
                     const SnackBar(
                         content: Flutter.Text(Constants.CONTACT_CREATED)),
                   );
-                  var json =
-                      jsonEncode(_quillController.document.toDelta().toJson());
-                  print(json);
                 }
               },
               child: const Flutter.Text(
@@ -104,30 +102,22 @@ class Add extends ConsumerWidget {
                   InputField(
                       email, "Email Address", TextInputType.emailAddress),
                   InputField(homeAddress, "Home Address", TextInputType.text),
-                  QuillToolbar.basic(
-                      showHeaderStyle: false,
-                      showCodeBlock: false,
-                      showIndent: false,
-                      showListNumbers: false,
-                      showListCheck: false,
-                      showBoldButton: false,
-                      showBackgroundColorButton: false,
-                      showLink: false,
-                      showQuote: false,
-                      showUnderLineButton: false,
-                      showItalicButton: false,
-                      showUndo: false,
-                      showRedo: false,
-                      showInlineCode: false,
-                      showImageButton: false,
-                      showVideoButton: false,
-                      showClearFormat: false,
-                      showStrikeThrough: false,
-                      controller: _quillController),
+                  Row(children: const [
+                    Flutter.Text(
+                      "Notes",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ]),
+                  Toolbar(quillController: _quillController),
                   Expanded(
                     child: QuillEditor(
                         focusNode: _focus,
                         autoFocus: false,
+                        placeholder: "Add notes...",
                         controller: _quillController,
                         readOnly: false,
                         scrollController: ScrollController(),
