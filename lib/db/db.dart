@@ -8,7 +8,7 @@ Future<Database> database() async {
     onCreate: (db, version) {
       // create all the different tables
       return db.execute(
-        'CREATE TABLE contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, birthday TEXT, email TEXT, address TEXT, phoneNumber TEXT)',
+        'CREATE TABLE contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, birthday TEXT, email TEXT, address TEXT, phoneNumber TEXT, notes TEXT)',
       );
     },
     version: 1,

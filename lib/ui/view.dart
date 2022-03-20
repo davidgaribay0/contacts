@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:animations/animations.dart';
 import 'package:contacts/model/contact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'common/input_field.dart';
 import '../db/contact_table.dart';
+import 'contact_list.dart';
 import 'edit.dart';
+import 'package:flutter/src/widgets/text.dart' as Flutter;
 
 final contactProvider =
     FutureProvider.autoDispose.family<Contact, int?>((ref, id) async {
@@ -21,29 +26,32 @@ class View extends ConsumerWidget {
   TextEditingController birthday = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController homeAddress = TextEditingController();
+  final FocusNode _focus = FocusNode();
 
   View(this.id, {Key? key}) : super(key: key);
 
-  showAlertDialog(BuildContext context, Contact outerContact) {
+  showAlertDialog(BuildContext context, Contact outerContact, WidgetRef ref) {
+
+
     Widget cancelButton = TextButton(
-      child: const Text("No"),
+      child: const Flutter.Text("No"),
       onPressed: () {
         Navigator.pop(context);
       },
     );
     Widget continueButton = TextButton(
-      child: const Text("Yes"),
+      child: const Flutter.Text("Yes"),
       onPressed: () async {
         await ContactTable().delete(outerContact.id);
-        // TODO
-        // ref.refresh(contactListsProvider);
+        ref.refresh(contactListsProvider);
         Navigator.pop(context);
         Navigator.pop(context);
       },
     );
 
     AlertDialog alert = AlertDialog(
-      content: const Text("Are you sure you want to delete this contact"),
+      content:
+          const Flutter.Text("Are you sure you want to delete this contact"),
       actions: [
         cancelButton,
         continueButton,
@@ -59,17 +67,19 @@ class View extends ConsumerWidget {
     );
   }
 
-  void handleClick(
-      String value, BuildContext context, Contact outerContact) async {
+  void handleClick(String value, BuildContext context, Contact outerContact,
+      WidgetRef ref) async {
     switch (value) {
       case 'Delete':
-        showAlertDialog(context, outerContact);
+        showAlertDialog(context, outerContact, ref);
         break;
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    QuillController _quillController = QuillController.basic();
+
     var outerContact;
 
     void _showEditPage() async {
@@ -90,7 +100,7 @@ class View extends ConsumerWidget {
         openBuilder: (context, _) => Edit(outerContact),
         closedBuilder: (BuildContext context, _) =>
             FloatingActionButton.extended(
-          label: const Text('Edit'),
+          label: const Flutter.Text('Edit'),
           icon: const Icon(
             Icons.edit,
             color: Colors.white,
@@ -106,6 +116,11 @@ class View extends ConsumerWidget {
           data: (data) {
             var contact = data.value;
             outerContact = contact;
+
+            var jsonContent = jsonDecode(contact.notes ?? "");
+            _quillController = QuillController(
+                document: Document.fromJson(jsonContent),
+                selection: const TextSelection.collapsed(offset: 0));
 
             var tel = contact.phoneNumber;
             var sendEmail = contact.email;
@@ -134,20 +149,20 @@ class View extends ConsumerWidget {
                     actions: [
                       PopupMenuButton(
                         onSelected: (String item) {
-                          handleClick(item, context, contact);
+                          handleClick(item, context, contact, ref);
                         },
                         itemBuilder: (BuildContext context) {
                           return {'Delete'}.map((String choice) {
                             return PopupMenuItem(
                               value: choice,
-                              child: Text(choice),
+                              child: Flutter.Text(choice),
                             );
                           }).toList();
                         },
                       ),
                     ],
                     flexibleSpace: FlexibleSpaceBar(
-                        title: Text(
+                        title: Flutter.Text(
                           contact.name,
                           style: const TextStyle(
                             color: Colors.black,
@@ -157,11 +172,9 @@ class View extends ConsumerWidget {
                         ),
                         background: Padding(
                           padding: const EdgeInsets.only(bottom: 60),
-                          child: Container(
-                            child: Image.network(
-                              "https://images.unsplash.com/photo-1561677843-39dee7a319ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2700&q=80",
-                              fit: BoxFit.fitWidth,
-                            ),
+                          child: Image.network(
+                            "https://images.unsplash.com/photo-1561677843-39dee7a319ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2700&q=80",
+                            fit: BoxFit.fitWidth,
                           ),
                         )),
                   ),
@@ -193,21 +206,32 @@ class View extends ConsumerWidget {
                           InputField(
                               homeAddress, "Home Address", TextInputType.text,
                               border: InputBorder.none, enabled: false),
+                          Expanded(
+                            child: QuillEditor(
+                                focusNode: _focus,
+                                autoFocus: false,
+                                controller: _quillController,
+                                readOnly: true,
+                                scrollController: ScrollController(),
+                                scrollable: true,
+                                padding: EdgeInsets.zero,
+                                expands: false),
+                          )
                         ],
                       )
                     ]),
               ),
             );
           },
-          loading: (_) => Center(child: CircularProgressIndicator()),
-          error: (message) => Center(child: Text(message.error.toString()))),
+          loading: (_) => const Center(child: CircularProgressIndicator()),
+          error: (message) =>
+              Center(child: Flutter.Text(message.error.toString()))),
     );
   }
 
   List<Widget> _buildQuickActionIcons(Contact contact) {
     List<Widget>? widgets = [];
     if (contact.phoneNumber.isNotEmpty) {
-      //format phone number correctly
       var tel = contact.phoneNumber;
       widgets.add(TextButton(
           onPressed: () {
@@ -219,7 +243,7 @@ class View extends ConsumerWidget {
               color: Colors.black,
             ),
             SizedBox(height: 15),
-            Text("Call", style: TextStyle(color: Colors.black))
+            Flutter.Text("Call", style: TextStyle(color: Colors.black))
           ])));
       widgets.add(
         TextButton(
@@ -232,12 +256,12 @@ class View extends ConsumerWidget {
                 color: Colors.black,
               ),
               SizedBox(height: 15),
-              Text("Text", style: TextStyle(color: Colors.black))
+              Flutter.Text("Text", style: TextStyle(color: Colors.black))
             ])),
       );
     }
     if (contact.email!.isNotEmpty) {
-      // do formatting if needed
+      // TODO formatting if needed
       var sendEmail = contact.email;
       widgets.add(TextButton(
           onPressed: () {
@@ -249,7 +273,7 @@ class View extends ConsumerWidget {
               color: Colors.black,
             ),
             SizedBox(height: 15),
-            Text("Email", style: TextStyle(color: Colors.black))
+            Flutter.Text("Email", style: TextStyle(color: Colors.black))
           ])));
     }
     return widgets;

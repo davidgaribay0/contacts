@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:contacts/ui/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../util/constants.dart' as Constants;
@@ -9,6 +12,7 @@ import 'common/input_field.dart';
 import '../model/contact.dart';
 import 'contact_list.dart';
 import 'package:contacts/db/contact_table.dart';
+import 'package:flutter/src/widgets/text.dart' as Flutter;
 
 class Edit extends ConsumerWidget {
   final Contact contact;
@@ -19,6 +23,9 @@ class Edit extends ConsumerWidget {
   TextEditingController birthday = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController homeAddress = TextEditingController();
+  final FocusNode _focus = FocusNode();
+  QuillController _quillController = QuillController.basic();
+
   var phoneNumberMask = MaskTextInputFormatter(
       mask: '(###) ###-####x#####', filter: {"#": RegExp(r'[0-9]')});
   var birthdayMask = MaskTextInputFormatter(
@@ -33,6 +40,11 @@ class Edit extends ConsumerWidget {
     birthday.text = contact.birthday!;
     email.text = contact.email!;
     homeAddress.text = contact.address!;
+
+    var jsonContent = jsonDecode(contact.notes ?? "");
+    _quillController = QuillController(
+        document: Document.fromJson(jsonContent),
+        selection: const TextSelection.collapsed(offset: 0));
 
     return SafeArea(
       child: Scaffold(
@@ -49,13 +61,15 @@ class Edit extends ConsumerWidget {
                       phoneNumber: phoneNumber.text,
                       birthday: birthday.text,
                       email: email.text,
-                      address: homeAddress.text));
+                      address: homeAddress.text,
+                      notes: jsonEncode(
+                          _quillController.document.toDelta().toJson())));
                   watch.refresh(contactProvider(contact.id));
                   watch.refresh(contactListsProvider);
                   Navigator.pop(context);
                 }
               },
-              child: const Text(
+              child: const Flutter.Text(
                 "Save",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
@@ -91,6 +105,37 @@ class Edit extends ConsumerWidget {
               ),
               InputField(email, "Email Address", TextInputType.emailAddress),
               InputField(homeAddress, "Home Address", TextInputType.text),
+              QuillToolbar.basic(
+                  showHeaderStyle: false,
+                  showCodeBlock: false,
+                  showIndent: false,
+                  showListNumbers: false,
+                  showListCheck: false,
+                  showBoldButton: false,
+                  showBackgroundColorButton: false,
+                  showLink: false,
+                  showQuote: false,
+                  showUnderLineButton: false,
+                  showItalicButton: false,
+                  showUndo: false,
+                  showRedo: false,
+                  showInlineCode: false,
+                  showImageButton: false,
+                  showVideoButton: false,
+                  showClearFormat: false,
+                  showStrikeThrough: false,
+                  controller: _quillController),
+              Expanded(
+                child: QuillEditor(
+                    focusNode: _focus,
+                    autoFocus: false,
+                    controller: _quillController,
+                    readOnly: false,
+                    scrollController: ScrollController(),
+                    scrollable: true,
+                    padding: EdgeInsets.zero,
+                    expands: false),
+              )
             ]),
           ),
         ),

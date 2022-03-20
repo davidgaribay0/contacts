@@ -28,6 +28,7 @@ class ContactTable {
         email: maps[i]['email'],
         address: maps[i]['address'],
         phoneNumber: maps[i]['phoneNumber'],
+        notes: maps[i]['notes'],
       );
     });
   }
@@ -41,7 +42,7 @@ class ContactTable {
       limit: 1,
     );
 
-    if (contacts.length != 0) {
+    if (contacts.isNotEmpty) {
       return Contact.fromDb(contacts.first);
     }
     throw Error();

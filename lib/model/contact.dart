@@ -5,6 +5,7 @@ class Contact {
   final String? birthday;
   final String? email;
   final String? address;
+  final String? notes;
 
   Contact({
     this.id,
@@ -13,6 +14,7 @@ class Contact {
     this.birthday,
     this.email,
     this.address,
+    this.notes,
   });
 
 
@@ -24,6 +26,7 @@ class Contact {
       'email': email,
       'address': address,
       'phoneNumber': phoneNumber,
+      'notes': notes,
     };
   }
 
@@ -33,10 +36,13 @@ class Contact {
         birthday = map['birthday'],
         email = map['email'],
         address = map['address'],
-        phoneNumber = map['phoneNumber'];
+        phoneNumber = map['phoneNumber'],
+        notes = map['notes']
+
+  ;
 
   @override
   String toString() {
-    return 'Contact{id: $id, name: $name, birthday: $birthday, email: $email, address: $address, phoneNumber: $phoneNumber}';
+    return 'Contact{id: $id, name: $name, birthday: $birthday, email: $email, address: $address, phoneNumber: $phoneNumber, notes : $notes}';
   }
 }

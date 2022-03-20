@@ -47,7 +47,9 @@ class Add extends ConsumerWidget {
                       phoneNumber: phoneNumber.text,
                       birthday: birthday.text,
                       email: email.text,
-                      address: homeAddress.text));
+                      address: homeAddress.text,
+                      notes: jsonEncode(
+                          _quillController.document.toDelta().toJson())));
                   watch.refresh(contactListsProvider);
                   Navigator.pop(context);
                   // nice to have but not needed
