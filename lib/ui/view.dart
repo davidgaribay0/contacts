@@ -6,6 +6,7 @@ import 'package:contacts/ui/common/application_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'common/input_field.dart';
 import '../db/contact_table.dart';
@@ -20,6 +21,9 @@ final contactProvider =
 });
 
 class View extends ConsumerWidget {
+  var phoneNumberMask = MaskTextInputFormatter(
+      mask: '(###) ###-####x#####', filter: {"#": RegExp(r'[0-9]')});
+
   final int? id;
 
   TextEditingController phoneNumber = TextEditingController();
@@ -120,7 +124,24 @@ class View extends ConsumerWidget {
             homeAddress.text = contact.address!;
 
             return Scaffold(
-              appBar: ApplicationBar(contact.name),
+              appBar: ApplicationBar(
+                contact.name,
+                actions: [
+                  PopupMenuButton(
+                    onSelected: (String item) {
+                      handleClick(item, context, contact, ref);
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return {'Delete'}.map((String choice) {
+                        return PopupMenuItem(
+                          value: choice,
+                          child: Flutter.Text(choice),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
+              ),
               backgroundColor: Colors.white,
               body: SingleChildScrollView(
                 child: Padding(
@@ -140,7 +161,9 @@ class View extends ConsumerWidget {
                           children: [
                             InputField(phoneNumber, "Phone Number",
                                 TextInputType.phone,
-                                border: InputBorder.none, enabled: false),
+                                inputFormatters: [phoneNumberMask],
+                                border: InputBorder.none,
+                                enabled: false),
                             InputField(birthday, "Birthday", TextInputType.text,
                                 border: InputBorder.none, enabled: false),
                             InputField(email, "Email Address",
@@ -192,7 +215,7 @@ class View extends ConsumerWidget {
       var tel = contact.phoneNumber;
       widgets.add(TextButton(
           onPressed: () {
-            launch("tel://$tel");
+            launch("tel:$tel");
           },
           child: Column(children: const [
             Icon(
@@ -205,7 +228,7 @@ class View extends ConsumerWidget {
       widgets.add(
         TextButton(
             onPressed: () {
-              launch("sms://$tel");
+              launch("sms:$tel");
             },
             child: Column(children: const [
               Icon(

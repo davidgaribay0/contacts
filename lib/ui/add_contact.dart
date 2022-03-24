@@ -45,7 +45,9 @@ class Add extends ConsumerWidget {
                 if (addFormKey.currentState!.validate()) {
                   await ContactTable().insert(Contact(
                       name: fullName.text,
-                      phoneNumber: phoneNumber.text,
+                      phoneNumber: phoneNumber.text
+                          .replaceAll(RegExp(r'[^\w\s]+'), '')
+                          .replaceAll(" ", ""),
                       birthday: birthday.text,
                       email: email.text,
                       address: homeAddress.text,
