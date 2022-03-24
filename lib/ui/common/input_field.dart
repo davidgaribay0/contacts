@@ -36,7 +36,7 @@ class InputField extends StatelessWidget {
       keyboardType: inputType,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(height: .4, fontWeight: FontWeight.w400),
+        labelStyle: const TextStyle(height: .4, fontWeight: FontWeight.w400),
         border: border,
         enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(

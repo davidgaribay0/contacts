@@ -2,18 +2,17 @@ import 'dart:convert';
 
 import 'package:contacts/ui/view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import '../util/constants.dart' as Constants;
+import '../util/constants.dart' as constants;
 import 'common/application_bar.dart';
 import 'common/editor/toolbar.dart';
 import 'common/input_field.dart';
 import '../model/contact.dart';
 import 'contact_list.dart';
 import 'package:contacts/db/contact_table.dart';
-import 'package:flutter/src/widgets/text.dart' as Flutter;
+import 'package:flutter/src/widgets/text.dart' as flutter;
 
 class Edit extends ConsumerWidget {
   final Contact contact;
@@ -35,7 +34,7 @@ class Edit extends ConsumerWidget {
   final editFormKey = GlobalKey<FormState>();
 
   @override
-  Widget build(BuildContext context, WidgetRef watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     fullName.text = contact.name;
     phoneNumber.text = contact.phoneNumber;
     birthday.text = contact.birthday!;
@@ -65,12 +64,12 @@ class Edit extends ConsumerWidget {
                       address: homeAddress.text,
                       notes: jsonEncode(
                           _quillController.document.toDelta().toJson())));
-                  watch.refresh(contactProvider(contact.id));
-                  watch.refresh(contactListsProvider);
+                  ref.refresh(contactProvider(contact.id));
+                  ref.refresh(contactListsProvider);
                   Navigator.pop(context);
                 }
               },
-              child: const Flutter.Text(
+              child: const flutter.Text(
                 "Save",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
@@ -92,7 +91,7 @@ class Edit extends ConsumerWidget {
                   TextInputType.text,
                   validation: (value) {
                     if (value == null || value.isEmpty) {
-                      return Constants.FULL_NAME_REQUIRED;
+                      return constants.FULL_NAME_REQUIRED;
                     }
                     return null;
                   },
@@ -108,27 +107,29 @@ class Edit extends ConsumerWidget {
                 InputField(email, "Email Address", TextInputType.emailAddress),
                 InputField(homeAddress, "Home Address", TextInputType.text),
                 Row(children: const [
-                  Flutter.Text(
+                  flutter.Text(
                     "Notes",
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
                     ),
                   ),
                 ]),
                 Toolbar(quillController: _quillController),
-                Expanded(
-                  child: QuillEditor(
-                      focusNode: _focus,
-                      autoFocus: false,
-                      controller: _quillController,
-                      readOnly: false,
-                      scrollController: ScrollController(),
-                      scrollable: true,
-                      padding: EdgeInsets.zero,
-                      expands: false),
-                )
+                Flex(direction: Axis.horizontal, children: [
+                  Expanded(
+                    child: QuillEditor(
+                        focusNode: _focus,
+                        autoFocus: false,
+                        controller: _quillController,
+                        readOnly: false,
+                        scrollController: ScrollController(),
+                        scrollable: true,
+                        padding: EdgeInsets.zero,
+                        expands: false),
+                  ),
+                ])
               ]),
             ),
           ),

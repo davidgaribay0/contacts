@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:animations/animations.dart';
 import 'package:contacts/model/contact.dart';
+import 'package:contacts/ui/common/application_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,8 +31,6 @@ class View extends ConsumerWidget {
   View(this.id, {Key? key}) : super(key: key);
 
   showAlertDialog(BuildContext context, Contact outerContact, WidgetRef ref) {
-
-
     Widget cancelButton = TextButton(
       child: const Flutter.Text("No"),
       onPressed: () {
@@ -82,12 +80,6 @@ class View extends ConsumerWidget {
 
     var outerContact;
 
-    void _showEditPage() async {
-      Navigator.of(context).push(PageRouteBuilder(
-          opaque: false,
-          pageBuilder: (BuildContext context, _, __) => Edit(outerContact)));
-    }
-
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: OpenContainer(
@@ -127,56 +119,9 @@ class View extends ConsumerWidget {
             email.text = contact.email!;
             homeAddress.text = contact.address!;
 
-            return NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return [
-                  SliverAppBar(
-                    elevation: 0,
-                    expandedHeight: 260,
-                    floating: false,
-                    pinned: true,
-                    iconTheme: const IconThemeData(
-                      color: Colors.black, //change your color here
-                    ),
-                    backgroundColor: const Color(0xFFFFFFFF),
-                    systemOverlayStyle: const SystemUiOverlayStyle(
-                        statusBarColor: Colors.white,
-                        statusBarIconBrightness: Brightness.dark),
-                    actions: [
-                      PopupMenuButton(
-                        onSelected: (String item) {
-                          handleClick(item, context, contact, ref);
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return {'Delete'}.map((String choice) {
-                            return PopupMenuItem(
-                              value: choice,
-                              child: Flutter.Text(choice),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    ],
-                    flexibleSpace: FlexibleSpaceBar(
-                        title: Flutter.Text(
-                          contact.name,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 20,
-                          ),
-                        ),
-                        background: Padding(
-                          padding: const EdgeInsets.only(bottom: 60),
-                          child: Image.network(
-                            "https://images.unsplash.com/photo-1561677843-39dee7a319ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2700&q=80",
-                            fit: BoxFit.fitWidth,
-                          ),
-                        )),
-                  ),
-                ];
-              },
+            return Scaffold(
+              appBar: ApplicationBar(contact.name),
+              backgroundColor: Colors.white,
               body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -193,8 +138,8 @@ class View extends ConsumerWidget {
                         Wrap(
                           runSpacing: 20,
                           children: [
-                            InputField(
-                                phoneNumber, "Phone Number", TextInputType.phone,
+                            InputField(phoneNumber, "Phone Number",
+                                TextInputType.phone,
                                 border: InputBorder.none, enabled: false),
                             InputField(birthday, "Birthday", TextInputType.text,
                                 border: InputBorder.none, enabled: false),
@@ -210,21 +155,24 @@ class View extends ConsumerWidget {
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 16,
+                                  height: .4,
+                                  fontSize: 12,
                                 ),
                               ),
                             ]),
-                            Expanded(
-                              child: QuillEditor(
-                                  focusNode: _focus,
-                                  autoFocus: false,
-                                  controller: _quillController,
-                                  readOnly: true,
-                                  scrollController: ScrollController(),
-                                  scrollable: true,
-                                  padding: EdgeInsets.zero,
-                                  expands: false),
-                            )
+                            Flex(direction: Axis.horizontal, children: [
+                              Expanded(
+                                child: QuillEditor(
+                                    focusNode: _focus,
+                                    autoFocus: false,
+                                    controller: _quillController,
+                                    readOnly: true,
+                                    scrollController: ScrollController(),
+                                    scrollable: true,
+                                    padding: EdgeInsets.zero,
+                                    expands: false),
+                              ),
+                            ])
                           ],
                         )
                       ]),

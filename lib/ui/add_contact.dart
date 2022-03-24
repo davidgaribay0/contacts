@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:contacts/util/constants.dart' as Constants;
 import 'package:flutter/src/widgets/text.dart' as Flutter;
-
+import 'package:contacts/ui/common/application_bar.dart';
 import '../db/contact_table.dart';
 import '../model/contact.dart';
 import 'common/application_bar.dart';
@@ -106,25 +106,26 @@ class Add extends ConsumerWidget {
                     Flutter.Text(
                       "Notes",
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
                       ),
                     ),
                   ]),
                   Toolbar(quillController: _quillController),
-                  Expanded(
-                    child: QuillEditor(
-                        focusNode: _focus,
-                        autoFocus: false,
-                        placeholder: "Add notes...",
-                        controller: _quillController,
-                        readOnly: false,
-                        scrollController: ScrollController(),
-                        scrollable: true,
-                        padding: EdgeInsets.zero,
-                        expands: false),
-                  )
+                  Flex(direction: Axis.horizontal, children: [
+                    Expanded(
+                      child: QuillEditor(
+                          focusNode: _focus,
+                          autoFocus: false,
+                          controller: _quillController,
+                          readOnly: true,
+                          scrollController: ScrollController(),
+                          scrollable: true,
+                          padding: EdgeInsets.zero,
+                          expands: false),
+                    ),
+                  ])
                 ]),
               ),
             ),
