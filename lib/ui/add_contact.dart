@@ -79,7 +79,7 @@ class Add extends ConsumerWidget {
               key: addFormKey,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 child: Wrap(runSpacing: 15, children: [
                   InputField(
                     fullName,
@@ -121,7 +121,7 @@ class Add extends ConsumerWidget {
                           focusNode: _focus,
                           autoFocus: false,
                           controller: _quillController,
-                          readOnly: true,
+                          readOnly: false,
                           scrollController: ScrollController(),
                           scrollable: true,
                           padding: EdgeInsets.zero,
