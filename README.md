@@ -1,3 +1,3 @@
 # Demo
 
-[Contacts App](assets/demo.gif)
+[Contacts App](assets/demo.mp4)
